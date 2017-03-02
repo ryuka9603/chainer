@@ -189,7 +189,7 @@ class Link(object):
                 grad = self.xp.zeros_like(data)
             else:
                 grad = self.xp.full_like(data, numpy.nan)
-        var = variable.Variable(data, volatile='auto', name=name)
+        var = variable.Variable(data, name=name)
         var.grad = grad
         self._params.append(name)
         d[name] = var

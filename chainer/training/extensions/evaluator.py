@@ -5,6 +5,7 @@ import six
 from chainer import configuration
 from chainer.dataset import convert
 from chainer.dataset import iterator as iterator_module
+from chainer import function
 from chainer import link
 from chainer import reporter as reporter_module
 from chainer.training import extension
@@ -164,18 +165,19 @@ class Evaluator(extension.Extension):
 
         for batch in it:
             observation = {}
-            with reporter_module.report_scope(observation):
+            with reporter_module.report_scope(observation), \
+                 function.no_backprop_mode():
                 in_arrays = self.converter(batch, self.device)
                 if isinstance(in_arrays, tuple):
-                    in_vars = tuple(variable.Variable(x, volatile='on')
+                    in_vars = tuple(variable.Variable(x)
                                     for x in in_arrays)
                     eval_func(*in_vars)
                 elif isinstance(in_arrays, dict):
-                    in_vars = {key: variable.Variable(x, volatile='on')
+                    in_vars = {key: variable.Variable(x)
                                for key, x in six.iteritems(in_arrays)}
                     eval_func(**in_vars)
                 else:
-                    in_var = variable.Variable(in_arrays, volatile='on')
+                    in_var = variable.Variable(in_arrays)
                     eval_func(in_var)
 
             summary.add(observation)
