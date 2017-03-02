@@ -8,7 +8,6 @@ import six
 
 import chainer
 from chainer import cuda
-from chainer import flag
 from chainer import utils
 
 
